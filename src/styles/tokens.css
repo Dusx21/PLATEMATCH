@@ -1,0 +1,23 @@
+:root {
+  /* Brand v2 Color Tokens */
+  --color-aubergine: #2A1455;
+  --color-chili: #FF5A3C;
+  --color-mango: #FF9F1C;
+  --color-mint: #19C37D;
+  --color-cream: #FFF3E4;
+  --color-white: #FFFFFF;
+
+  /* Typography */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Radius */
+  --radius-card: 24px;
+  --radius-modal: 28px;
+  --radius-button: 16px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-soft: 0 8px 24px -4px rgba(42, 20, 85, 0.08);
+  --shadow-elevated: 0 16px 36px -6px rgba(42, 20, 85, 0.14);
+}

@@ -1,0 +1,58 @@
+@import './styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply bg-cream text-aubergine font-sans antialiased selection:bg-chili selection:text-white;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-outfit text-aubergine tracking-tight;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF3E4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1C2E7;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8A67C1;
+}
+
+/* Mobile viewport container */
+.mobile-app-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #FFF3E4;
+  box-shadow: 0 0 50px -12px rgba(42, 20, 85, 0.1);
+}
+
+@media (min-width: 640px) {
+  .mobile-app-shell {
+    border-left: 1px solid rgba(42, 20, 85, 0.08);
+    border-right: 1px solid rgba(42, 20, 85, 0.08);
+  }
+}
