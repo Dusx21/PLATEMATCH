@@ -8,6 +8,7 @@ import { HeaderBar } from './HeaderBar';
 import { FilterSheet } from './FilterSheet';
 import { LocationSelectorModal } from './LocationSelectorModal';
 import { DishDetailModal } from './DishDetailModal';
+import { RestaurantDetailModal } from './RestaurantDetailModal';
 import { MatchDecisionModal } from '../reservation/MatchDecisionModal';
 import { CheckoutModal } from '../reservation/CheckoutModal';
 import { EmptyState } from '../ui/EmptyState';
@@ -41,6 +42,7 @@ export function DiscoveryFeed({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [detailDish, setDetailDish] = useState(null);
+  const [detailRestaurant, setDetailRestaurant] = useState(null);
   const [matchDish, setMatchDish] = useState(null);
   const [checkoutDish, setCheckoutDish] = useState(null);
 
@@ -122,7 +124,7 @@ export function DiscoveryFeed({
             </button>
           </div>
         ) : currentItem ? (
-          <div className="relative w-full h-[450px] max-w-sm">
+          <div className="relative w-full h-[470px] max-w-sm">
             {/* Next card in stack (preview under the top card) */}
             {nextItem && (
               mode === 'dish' ? (
@@ -142,6 +144,7 @@ export function DiscoveryFeed({
                   onSwipeLeft={() => {}}
                   onSwipeRight={() => {}}
                   onSelectDish={() => {}}
+                  onOpenDetail={() => {}}
                 />
               )
             )}
@@ -165,6 +168,7 @@ export function DiscoveryFeed({
                   onSwipeLeft={handleSwipeLeft}
                   onSwipeRight={handleSwipeRight}
                   onSelectDish={(dish) => setMatchDish(dish)}
+                  onOpenDetail={(rest) => setDetailRestaurant(rest)}
                 />
               )}
             </AnimatePresence>
@@ -188,7 +192,11 @@ export function DiscoveryFeed({
           onPass={() => handleSwipeLeft(currentItem)}
           onMatch={() => handleSwipeRight(currentItem)}
           onInfo={() => {
-            if (mode === 'dish') setDetailDish(currentItem);
+            if (mode === 'dish') {
+              setDetailDish(currentItem);
+            } else {
+              setDetailRestaurant(currentItem);
+            }
           }}
           onUndo={handleUndo}
           canUndo={history.length > 0}
@@ -234,6 +242,17 @@ export function DiscoveryFeed({
         dish={detailDish}
         onSelectMatch={(dish) => {
           setDetailDish(null);
+          setMatchDish(dish);
+        }}
+      />
+
+      {/* Restaurant Detail Modal */}
+      <RestaurantDetailModal
+        isOpen={Boolean(detailRestaurant)}
+        onClose={() => setDetailRestaurant(null)}
+        restaurant={detailRestaurant}
+        onSelectDish={(dish) => {
+          setDetailRestaurant(null);
           setMatchDish(dish);
         }}
       />

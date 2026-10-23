@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Star, MapPin, Clock, Utensils, Check, X, ArrowRight } from 'lucide-react';
+import { Star, MapPin, Utensils, Check, X, ArrowRight, Info } from 'lucide-react';
 import { formatCurrency } from '../../lib/money';
 import { formatDistanceAndWalk } from '../../lib/geo';
 import { Badge } from '../ui/Badge';
@@ -10,6 +10,7 @@ export function RestaurantCard({
   onSwipeLeft,
   onSwipeRight,
   onSelectDish,
+  onOpenDetail,
   isFront = true,
 }) {
   const [imageError, setImageError] = useState(false);
@@ -70,8 +71,8 @@ export function RestaurantCard({
         </>
       )}
 
-      {/* Restaurant Atmosphere Banner */}
-      <div className="relative h-[42%] w-full bg-cream-400 overflow-hidden">
+      {/* Restaurant Atmosphere Banner - Compact proportional height */}
+      <div className="relative h-36 w-full bg-cream-400 overflow-hidden shrink-0">
         <img
           src={imageError ? defaultFallback : (restaurant.image_url || defaultFallback)}
           alt={restaurant.name}
@@ -79,10 +80,10 @@ export function RestaurantCard({
           className="w-full h-full object-cover pointer-events-none"
           draggable={false}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-aubergine/80 via-aubergine/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-aubergine/90 via-aubergine/30 to-transparent" />
 
         {/* Floating Badges */}
-        <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between z-10">
+        <div className="absolute top-3 inset-x-3.5 flex items-center justify-between z-10">
           <Badge variant="white" size="sm" icon={<MapPin size={12} className="text-chili" />}>
             {distanceInfo.fullText}
           </Badge>
@@ -92,20 +93,33 @@ export function RestaurantCard({
           </Badge>
         </div>
 
-        <div className="absolute bottom-3 left-4 right-4 z-10 text-white">
-          <h2 className="text-xl font-outfit font-extrabold text-cream leading-tight">
+        {/* Info button floating on image */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenDetail?.(restaurant);
+          }}
+          className="absolute bottom-2.5 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm text-aubergine shadow-md hover:bg-white transition-all active:scale-95"
+          aria-label={`Ver detalles e información de ${restaurant.name}`}
+        >
+          <Info size={16} />
+        </button>
+
+        <div className="absolute bottom-2.5 left-3.5 right-12 z-10 text-white">
+          <h2 className="text-lg font-outfit font-extrabold text-cream leading-tight truncate">
             {restaurant.name}
           </h2>
-          <p className="text-xs font-sans text-cream/80 truncate">
+          <p className="text-[11px] font-sans text-cream/80 truncate">
             {restaurant.tagline || restaurant.address}
           </p>
         </div>
       </div>
 
       {/* Menu Showcase for Indecisive Users */}
-      <div className="p-4 flex-1 flex flex-col justify-between bg-white overflow-hidden">
-        <div>
-          <div className="flex items-center justify-between mb-2">
+      <div className="p-3.5 flex-1 flex flex-col justify-between bg-white overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex items-center justify-between mb-2 shrink-0">
             <span className="text-[11px] font-outfit font-bold uppercase tracking-wider text-aubergine/60 flex items-center gap-1">
               <Utensils size={12} className="text-chili" />
               Platos disponibles ahora
@@ -115,9 +129,9 @@ export function RestaurantCard({
             </span>
           </div>
 
-          {/* Dishes list within this restaurant */}
-          <div className="space-y-2">
-            {(restaurant.dishes || []).slice(0, 3).map((dish) => (
+          {/* Dishes list with well-defined internal scroll to never cut off bottom elements */}
+          <div className="space-y-1.5 flex-1 overflow-y-auto pr-1 overscroll-contain">
+            {(restaurant.dishes || []).map((dish) => (
               <button
                 key={dish.id}
                 type="button"
@@ -125,19 +139,20 @@ export function RestaurantCard({
                   e.stopPropagation();
                   onSelectDish(dish);
                 }}
-                className="w-full p-2.5 rounded-xl border border-aubergine/10 hover:border-chili/50 bg-cream-100 hover:bg-cream-200 text-left flex items-center justify-between transition-all group"
+                className="w-full p-2 rounded-xl border border-aubergine/10 hover:border-chili/50 bg-cream-50 hover:bg-cream-100 text-left flex items-center justify-between transition-all group"
+                aria-label={`Seleccionar plato ${dish.title} por ${formatCurrency(dish.price)}`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <img
                     src={dish.image_url}
                     alt={dish.title}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
+                    className="w-9 h-9 rounded-lg object-cover shrink-0"
                   />
                   <div className="min-w-0">
                     <p className="font-outfit font-bold text-xs text-aubergine truncate group-hover:text-chili transition-colors">
                       {dish.title}
                     </p>
-                    <span className="text-[10px] text-aubergine/60 font-sans block">
+                    <span className="text-[10px] text-aubergine/60 font-sans block truncate">
                       Quedan {dish.stock_available} porciones
                     </span>
                   </div>
@@ -154,10 +169,13 @@ export function RestaurantCard({
           </div>
         </div>
 
-        <div className="pt-2 border-t border-aubergine/8 flex items-center justify-between text-xs text-aubergine/60">
-          <span>Horario: {restaurant.opening_hours || '11:30 - 16:00'}</span>
-          <span className="font-semibold text-aubergine">
-            Precios: {restaurant.price_level || 'S/ 12 - 18'}
+        {/* Bottom operational info (Horario y Precios) — always visible, shrink-0 */}
+        <div className="pt-2.5 pb-0.5 border-t border-aubergine/10 mt-2 flex items-center justify-between text-[11px] text-aubergine/70 shrink-0 bg-white">
+          <span className="font-sans truncate mr-2">
+            Horario: <strong className="font-medium text-aubergine">{restaurant.opening_hours || '11:30 - 16:00'}</strong>
+          </span>
+          <span className="font-semibold text-aubergine shrink-0">
+            Precios: <strong className="font-bold text-chili">{restaurant.price_level || 'S/ 12 - 18'}</strong>
           </span>
         </div>
       </div>
