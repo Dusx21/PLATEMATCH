@@ -108,7 +108,7 @@ export function DiscoveryFeed({
       />
 
       {/* Main Card Swiping Deck Area */}
-      <div className="flex-1 px-5 py-3 relative flex items-center justify-center min-h-[390px] max-h-[500px]">
+      <div className="flex-1 px-5 py-2 relative flex items-center justify-center min-h-[460px]">
         {loading ? (
           <LoadingState />
         ) : error ? (
@@ -122,7 +122,7 @@ export function DiscoveryFeed({
             </button>
           </div>
         ) : currentItem ? (
-          <div className="relative w-full h-full max-w-sm">
+          <div className="relative w-full h-[450px] max-w-sm">
             {/* Next card in stack (preview under the top card) */}
             {nextItem && (
               mode === 'dish' ? (

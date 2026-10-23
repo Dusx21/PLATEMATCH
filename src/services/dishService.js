@@ -89,23 +89,26 @@ export const dishService = {
 
         if (error) throw error;
 
-        dishes = (data || []).map((d) => ({
-          id: d.id,
-          restaurant_id: d.restaurants?.id,
-          restaurant_name: d.restaurants?.name || 'Restaurante Local',
-          restaurant_address: d.restaurants?.address || '',
-          restaurant_lat: d.restaurants?.latitude,
-          restaurant_lng: d.restaurants?.longitude,
-          title: d.title,
-          description: d.description,
-          price: Number(d.price),
-          stock_available: d.stock_available,
-          image_url: d.image_url,
-          category: d.category,
-          is_available: d.is_available,
-          tags: d.tags || [],
-          preparation_time_mins: d.preparation_time_mins || 8,
-        }));
+        dishes = (data || []).map((d) => {
+          const rest = Array.isArray(d.restaurants) ? d.restaurants[0] : d.restaurants;
+          return {
+            id: d.id,
+            restaurant_id: rest?.id || d.restaurant_id,
+            restaurant_name: rest?.name || 'Restaurante Local',
+            restaurant_address: rest?.address || '',
+            restaurant_lat: rest?.latitude,
+            restaurant_lng: rest?.longitude,
+            title: d.title,
+            description: d.description,
+            price: Number(d.price),
+            stock_available: d.stock_available,
+            image_url: d.image_url,
+            category: d.category,
+            is_available: d.is_available,
+            tags: d.tags || [],
+            preparation_time_mins: d.preparation_time_mins || 8,
+          };
+        });
       } catch (err) {
         console.warn('Supabase fetch failed, falling back to local demo storage:', err.message);
         dishes = this._getLocalDishes();
